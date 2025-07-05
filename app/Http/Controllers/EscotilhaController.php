@@ -5,35 +5,41 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Escotilha;
 use Carbon\Carbon;
+use App\Services\ApiResponse;
 
 class EscotilhaController extends Controller
 {
     public function inserirEscotilha(Request $request)
     {
-        try {   
+        try {
             $escotilha = Escotilha::create([
                 'distancia' => $request->distancia,
                 'luz_ambiente' => $request->luz_ambiente,
                 'hora_atualizacao' => Carbon::now(),
             ]);
 
-            return response()->json([
-                'message' => 'Registro inserido com sucesso',
+            return ApiResponse::success([
+                'message' => 'Registro da escotilha inserido com sucesso',
                 'data' => $escotilha
-            ], 201);
+            ]);
         } catch (\Exception $e) {
             \Log::error('Erro ao inserir registro da escotilha: ' . $e->getMessage());
-            return response()->json(['message' => 'Erro ao inserir registro da escotilha'], 500);
+            return ApiResponse::error('Erro ao inserir registro da escotilha');
         }
     }
 
     public function atualizarEscotilha(Request $request, $id)
     {
+        $request->validate([
+            'distancia' => 'required|numeric',
+            'luz_ambiente' => 'required|numeric',
+        ]);
+
         try {
             $escotilha = Escotilha::find($id);
 
             if (!$escotilha) {
-                return response()->json(['message' => 'Registro da escotilha não encontrado'], 404);
+                return ApiResponse::error('Registro da escotilha não encontrado');
             }
 
             $escotilha->update([
@@ -42,13 +48,13 @@ class EscotilhaController extends Controller
                 'hora_atualizacao' => Carbon::now(),
             ]);
 
-            return response()->json([
+            return ApiResponse::success([
                 'message' => 'Registro da escotilha atualizado com sucesso',
                 'data' => $escotilha
             ]);
         } catch (\Exception $e) {
             \Log::error('Erro ao atualizar registro da escotilha: ' . $e->getMessage());
-            return response()->json(['message' => 'Erro ao atualizar registro da escotilha'], 500);
+            return ApiResponse::error('Erro ao atualizar registro da escotilha');
         }
     }
 
@@ -56,10 +62,13 @@ class EscotilhaController extends Controller
     {
         try {
             $registros = Escotilha::orderBy('hora_atualizacao', 'desc')->get();
-            return response()->json(['data' => $registros]);
+            return ApiResponse::success([
+                'message' => 'Lista de registros da escotilha',
+                'data' => $registros
+            ]);
         } catch (\Exception $e) {
             \Log::error('Erro ao listar registros da escotilha: ' . $e->getMessage());
-            return response()->json(['message' => 'Erro ao listar registros da escotilha'], 500);
+            return ApiResponse::error('Erro ao listar registros da escotilha');
         }
     }
 
@@ -69,13 +78,16 @@ class EscotilhaController extends Controller
             $escotilha = Escotilha::find($id);
 
             if (!$escotilha) {
-                return response()->json(['message' => 'Registro da escotilha não encontrado'], 404);
+                return ApiResponse::error('Registro da escotilha não encontrado');
             }
 
-            return response()->json(['data' => $escotilha]);
+            return Apiresponse::success([
+                'message' => 'Registro da escotilha encontrado',
+                'data' => $escotilha
+            ]);
         } catch (\Exception $e) {
             \Log::error('Erro ao obter registro da escotilha: ' . $e->getMessage());
-            return response()->json(['message' => 'Erro ao obter registro da escotilha'], 500);
+            return ApiResponse::error('Erro ao obter registro da escotilha');
         }
     }
 
@@ -85,15 +97,17 @@ class EscotilhaController extends Controller
             $escotilha = Escotilha::find($id);
 
             if (!$escotilha) {
-                return response()->json(['message' => 'Registro da escotilha não encontrado'], 404);
+                return ApiResponse::error('Registro da escotilha não encontrado');
             }
 
             $escotilha->delete();
 
-            return response()->json(['message' => 'Registro da escotilha excluído com sucesso']);
+            return ApiResponse::success([
+                'message' => 'Registro da escotilha excluído com sucesso',
+            ]);
         } catch (\Exception $e) {
             \Log::error('Erro ao excluir registro da escotilha: ' . $e->getMessage());
-            return response()->json(['message' => 'Erro ao excluir registro da escotilha'], 500);
+            return ApiResponse::error('Erro ao excluir registro da escotilha');
         }
     }
 }

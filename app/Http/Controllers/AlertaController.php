@@ -9,20 +9,12 @@ use Illuminate\Support\Facades\Auth;
 
 class AlertaController extends Controller
 {
-    public function listarAlertas()
-    {
-        $user = Auth::user();
+    public function listarAlertas(){
+        $alertas = Alerta::with('escotilha')->latest()->get();
 
-        if ($user->hasRole('admin')) {
-            $alertas = Alerta::with('escotilha')->latest()->get();
-        } else {
-            $alertas = Alerta::whereHas('escotilha', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            })->with('escotilha')->latest()->get();
-        }
-
-        return response()->json($alertas);
+        return response()->json(['data' => $alertas]);
     }
+
 
     public function obterAlertaPorId($id)
     {
