@@ -8,13 +8,13 @@ use App\Services\ApiResponse;
 
 Route::get('/status', function () {
     return ApiResponse::success('API is running');
-});
+})->middleware('auth:sanctum');
 
-Route::get('/escotilhas', [EscotilhaController::class, 'listarEscotilha']);
-Route::post('/escotilhas', [EscotilhaController::class, 'inserirEscotilha']);
-Route::delete('/escotilhas/{id}', [EscotilhaController::class, 'deletarEscotilha']);
-Route::put('/escotilhas/{id}', [EscotilhaController::class, 'atualizarEscotilha']);
-Route::get('/escotilhas/{id}', [EscotilhaController::class, 'obterEscotilhaPorId']);
+Route::get('/escotilhas', [EscotilhaController::class, 'listarEscotilha'])->middleware('auth:sanctum');
+Route::post('/escotilhas', [EscotilhaController::class, 'inserirEscotilha'])->middleware('auth:sanctum');
+Route::delete('/escotilhas/{id}', [EscotilhaController::class, 'deletarEscotilha'])->middleware('auth:sanctum');
+Route::put('/escotilhas/{id}', [EscotilhaController::class, 'atualizarEscotilha'])->middleware('auth:sanctum');
+Route::get('/escotilhas/{id}', [EscotilhaController::class, 'obterEscotilhaPorId'])->middleware('auth:sanctum');
 
 Route::get('/alertas', [App\Http\Controllers\AlertaController::class, 'listarAlertas']);
 Route::get('/alertas/{id}', [App\Http\Controllers\AlertaController::class, 'obterAlertaPorId']);
@@ -25,3 +25,4 @@ Route::put('/alertas/{id}', [App\Http\Controllers\AlertaController::class, 'atua
 // Route::apiResource('hatch', HatchController::class);
 
 Route::post('/login', AuthController::class . '@login');
+Route::post('/logout', AuthController::class . '@logout')->middleware('auth:sanctum');
