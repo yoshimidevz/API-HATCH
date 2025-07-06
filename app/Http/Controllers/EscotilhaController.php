@@ -11,6 +11,24 @@ class EscotilhaController extends Controller
 {
     public function inserirEscotilha(Request $request)
     {
+
+        if (!auth()->user()->tokenCan('clients:list')) {
+            return ApiResponse::unauthorized();
+        }
+
+        if (!$request->has(['distancia', 'luz_ambiente'])) {
+            return ApiResponse::error('Parâmetros obrigatórios não informados');
+        }
+
+        if (!is_numeric($request->distancia) || !is_numeric($request->luz_ambiente)) {
+            return ApiResponse::error('Parâmetros inválidos: distancia e luz_ambiente devem ser numéricos');
+        }
+
+        $request->validate([
+            'distancia' => 'required|numeric',
+            'luz_ambiente' => 'required|numeric',
+        ]);
+
         try {
             $escotilha = Escotilha::create([
                 'distancia' => $request->distancia,
@@ -60,6 +78,10 @@ class EscotilhaController extends Controller
 
     public function listarEscotilha()
     {
+        if (!auth()->user()->tokenCan('clients:list')) {
+            return ApiResponse::error('Access denied', 401);
+        }
+
         try {
             $registros = Escotilha::orderBy('hora_atualizacao', 'desc')->get();
             return ApiResponse::success([

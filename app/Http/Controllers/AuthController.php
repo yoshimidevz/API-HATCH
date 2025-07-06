@@ -7,30 +7,37 @@ use App\Services\ApiResponse;
 
 class AuthController extends Controller
 {
-    public function login(Request $request){
+    public function login(Request $request)
+    {
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|string|min:6',
         ]);
 
-        $email = $request->input('email');
-        $password = $request->input('password');
-        $attempt = auth()->attempt(['email' => $email, 'password' => $password]);
+        $credentials = $request->only('email', 'password');
 
-        if (!$attempt) {
+        if (!auth()->attempt($credentials)) {
             return ApiResponse::unauthorized();
         }
 
         $user = auth()->user();
-        // $token = $user->createToken($user->name)->plainTextToken;
-        $token = $user->createToken($user->name, ['*'], now()->addHour())->plainTextToken;
+
+        // Define as abilities com base no papel do usuário
+        $abilities = match ($user->role) {
+            'admin' => ['*'], // ou ['admin']
+            'client' => ['clients:list', 'clients:view'], // apenas as rotas permitidas
+            default => [],
+        };
+
+        $token = $user->createToken($user->name, $abilities, now()->addHour())->plainTextToken;
 
         return ApiResponse::success([
             'user' => $user,
-            'email' => $email,
-            'token' => $token
+            'email' => $user->email,
+            'token' => $token,
         ]);
     }
+
 
     public function logout(Request $request){
         $request->user()->tokens()->delete();
