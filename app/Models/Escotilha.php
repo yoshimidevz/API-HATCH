@@ -28,4 +28,7 @@ class Escotilha extends Model
     {
         return $this->hasMany(Alerta::class);
     }
+    public function user(){
+        return $this->hasMany(User::class);
+    }
 }

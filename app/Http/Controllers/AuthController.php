@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\ApiResponse;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
 
 class AuthController extends Controller
 {
@@ -38,6 +41,31 @@ class AuthController extends Controller
         ]);
     }
 
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'client', // ou outro valor default
+        ]);
+
+        // Define as abilities conforme o papel
+        $abilities = ['clients:list', 'clients:view'];
+
+        $token = $user->createToken($user->name, $abilities, now()->addHour())->plainTextToken;
+
+        return ApiResponse::success([
+            'user' => $user,
+            'token' => $token,
+        ]);
+    }
 
     public function logout(Request $request){
         $request->user()->tokens()->delete();
