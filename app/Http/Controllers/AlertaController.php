@@ -15,6 +15,7 @@ class AlertaController extends Controller
         $alertas = Alerta::with(['sensorData.escotilha', 'sensorData.sensor']);
 
         if ($user->role !== 'admin') {
+            // Agora que user_id está diretamente na tabela escotilhas, esta query funciona
             $alertas->whereHas('sensorData.escotilha', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
             });
@@ -30,6 +31,7 @@ class AlertaController extends Controller
 
         $alerta = Alerta::with(['sensorData.escotilha', 'sensorData.sensor'])->findOrFail($id);
 
+        // Verifica se o usuário tem permissão para ver este alerta
         if ($user->role !== 'admin' && $alerta->sensorData->escotilha->user_id !== $user->id) {
             return response()->json(['erro' => 'Acesso não autorizado'], 403);
         }

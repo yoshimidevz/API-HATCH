@@ -12,22 +12,27 @@ class EscotilhaSeeder extends Seeder
     {
         $escotilha = new Escotilha();
         $escotilha->serial_number = 'ESCOTILHA-001';
+        $escotilha->user_id = 1;
         $escotilha->save();
 
         $escotilha = new Escotilha();
         $escotilha->serial_number = 'ESCOTILHA-002';
+        $escotilha->user_id = 1;
         $escotilha->save();
 
         $escotilha = new Escotilha();
         $escotilha->serial_number = 'ESCOTILHA-003';
+        $escotilha->user_id = 1;
         $escotilha->save();
 
         $escotilha = new Escotilha();
         $escotilha->serial_number = 'ESCOTILHA-004';
+        $escotilha->user_id = 1;
         $escotilha->save();
 
         $escotilha = new Escotilha();
         $escotilha->serial_number = 'ESCOTILHA-005';
+        $escotilha->user_id = 1;
         $escotilha->save();
     }
 }

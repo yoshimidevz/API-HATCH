@@ -47,8 +47,9 @@ class User extends Authenticatable
         ];
     }
 
+    // Adicionar a relação hasMany com o modelo Escotilha
     public function escotilhas()
     {
-        return $this->belongsToMany(Escotilha::class);
+        return $this->hasMany(Escotilha::class);
     }
 }
