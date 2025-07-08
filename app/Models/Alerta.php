@@ -27,10 +27,12 @@ class Alerta extends Model
     {
         return $this->belongsTo(SensorData::class);
     }
+
     public function sensor()
     {
         return $this->belongsTo(Sensor::class);
     }
+    
     public function escotilha()
     {
         return $this->belongsTo(Escotilha::class);

@@ -12,7 +12,12 @@ class SensorSeeder extends Seeder
     {
         $sensor = new Sensor();
         $sensor->name = 'Sensor Ultrassonico';
-        $sensor->type = 'distancia'; // Example sensor type
+        $sensor->type = 'distancia';
+        $sensor->save();
+
+        $sensor = new Sensor();
+        $sensor->name = 'Sensor Fotoresistor';
+        $sensor->type = 'luminosidade';
         $sensor->save();
     }
 }

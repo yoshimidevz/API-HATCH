@@ -22,13 +22,9 @@ Route::get('/sensores', [SensorDataController::class, 'listarSensorData'])->midd
 Route::post('/sensores', [SensorDataController::class, 'inserirSensorData'])->middleware('auth:sanctum','ability:admin');
 Route::get('/sensores/{id}', [SensorDataController::class, 'obterSensorDataPorId'])->middleware('auth:sanctum','ability:admin');
 
-Route::get('/alertas', [App\Http\Controllers\AlertaController::class, 'listarAlertas']);
-Route::get('/alertas/{id}', [App\Http\Controllers\AlertaController::class, 'obterAlertaPorId']);
-Route::post('/alertas', [App\Http\Controllers\AlertaController::class, 'inserirAlerta']);
-Route::delete('/alertas/{id}', [App\Http\Controllers\AlertaController::class, 'deletarAlerta']);
-Route::put('/alertas/{id}', [App\Http\Controllers\AlertaController::class, 'atualizarAlerta']);
-
-// Route::apiResource('hatch', HatchController::class);
+Route::get('/alertas', [App\Http\Controllers\AlertaController::class, 'listarAlertas'])->middleware('auth:sanctum','ability:clients:list');
+Route::get('/alertas/{id}', [App\Http\Controllers\AlertaController::class, 'obterAlertaPorId'])->middleware('auth:sanctum','ability:clients:view');
+Route::delete('/alertas/{id}', [App\Http\Controllers\AlertaController::class, 'deletarAlerta'])->middleware('auth:sanctum','ability:admin');
 
 Route::post('/login', AuthController::class . '@login');
 Route::post('/register', [AuthController::class, 'register']);

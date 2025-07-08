@@ -2,25 +2,37 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\SensorData;
+use App\Models\Escotilha;
+use App\Models\Sensor;
 
 class SensorDataSeeder extends Seeder
 {
     public function run(): void
     {
-        $sensorData = new SensorData();
-        $sensorData->escotilha_id = 1; // Assuming the escotilha with ID 1 exists
-        $sensorData->sensor_id = 1; // Assuming the sensor with ID 1 exists
-        $sensorData->valor = 15.5; // Example value
-        $sensorData->save();
+        // Pega IDs aleatórios existentes para evitar erro de FK
+        $escotilhaId1 = Escotilha::inRandomOrder()->value('id');
+        $sensorId1 = Sensor::inRandomOrder()->value('id');
 
-        $sensorData = new SensorData();
-        $sensorData->escotilha_id = 1; // Assuming the escotilha with ID 1 exists
-        $sensorData->sensor_id = 2; // Assuming the sensor with ID 2 exists
-        $sensorData->valor = 80.0;
-        $sensorData->save();
+        $escotilhaId2 = Escotilha::inRandomOrder()->value('id');
+        $sensorId2 = Sensor::inRandomOrder()->value('id');
 
+        if (!$escotilhaId1 || !$sensorId1 || !$escotilhaId2 || !$sensorId2) {
+            $this->command->info('Faltam escotilhas ou sensores para popular sensor_data.');
+            return;
+        }
+
+        SensorData::create([
+            'escotilha_id' => $escotilhaId1,
+            'sensor_id' => $sensorId1,
+            'valor' => 15.5,
+        ]);
+
+        SensorData::create([
+            'escotilha_id' => $escotilhaId2,
+            'sensor_id' => $sensorId2,
+            'valor' => 80.0,
+        ]);
     }
 }

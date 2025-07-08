@@ -10,19 +10,22 @@ return new class extends Migration
     {
         Schema::create('alertas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('escotilha_id')->constrained()->onDelete('cascade');
-            $table->string('tipo'); // ex: 'ABERTURA', 'FECHAMENTO', 'ERRO_SENSOR', 'DESCONEXÃO'
-            $table->string('mensagem'); // ex: 'A comporta foi aberta manualmente'
-            $table->timestamp('data_hora')->useCurrent();
-            $table->string('origem')->nullable(); // ex: 'esp32', 'app'
+
+            $table->foreignId('escotilha_id')
+                  ->constrained('escotilhas')
+                  ->onDelete('cascade');
+
+            $table->foreignId('sensor_data_id')
+                  ->constrained('sensor_data')
+                  ->onDelete('cascade');
+
+            $table->string('type');
+            $table->string('message');
             $table->timestamps();
             $table->softDeletes();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('alertas');
