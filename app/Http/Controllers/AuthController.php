@@ -27,7 +27,7 @@ class AuthController extends Controller
 
         // Define as abilities com base no papel do usuário
         $abilities = match ($user->role) {
-            'admin' => ['*'], // ou ['admin']
+            'admin' => ['admin'], // ou ['admin']
             'client' => ['clients:list', 'clients:view'], // apenas as rotas permitidas
             default => [],
         };

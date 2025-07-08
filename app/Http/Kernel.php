@@ -24,6 +24,7 @@ class Kernel extends HttpKernel
     ];
 
     protected $routeMiddleware = [
+        'auth:sanctum' => \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         'auth' => \App\Http\Middleware\Authenticate::class,
         // outros middlewares aqui
     ];

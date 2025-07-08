@@ -3,32 +3,25 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Escotilha extends Model
 {
-    use SoftDeletes;
-
     protected $table = 'escotilhas';
 
     protected $fillable = [
-        'distancia',
-        'luz_ambiente',
-        'hora_atualizacao',
+        'serial_number',
     ];
 
-    protected $dates = [
-        'hora_atualizacao',
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
-
+    public function sensorData()
+    {
+        return $this->hasMany(SensorData::class);
+    }
+    public function sensores()
+    {
+        return $this->hasMany(Sensor::class);
+    }
     public function alertas()
     {
         return $this->hasMany(Alerta::class);
-    }
-    public function user(){
-        return $this->hasMany(User::class);
     }
 }

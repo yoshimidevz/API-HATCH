@@ -6,24 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('escotilhas', function (Blueprint $table) {
+        Schema::create('sensores', function (Blueprint $table) {
             $table->id();
-            $table->string('serial_number')->unique();
+            $table->string('name');
+            $table->string('type');
             $table->timestamps();
             $table->softDeletes();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('escotilhas');
+        Schema::dropIfExists('sensores');
     }
 };

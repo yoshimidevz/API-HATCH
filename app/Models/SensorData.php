@@ -5,34 +5,36 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Alerta extends Model
+class SensorData extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'alertas';
+    protected $table = 'sensor_data';
 
     protected $fillable = [
-        'sensor_data_id',
-        'type',
-        'message',
+        'escotilha_id',
+        'sensor_id',
+        'valor',
+        'hora_atualizacao',
     ];
 
     protected $dates = [
+        'hora_atualizacao',
         'created_at',
         'updated_at',
         'deleted_at',
     ];
 
-    public function sensorData()
+    public function escotilha()
     {
-        return $this->belongsTo(SensorData::class);
+        return $this->belongsTo(Escotilha::class);
     }
     public function sensor()
     {
         return $this->belongsTo(Sensor::class);
     }
-    public function escotilha()
+    public function alertas()
     {
-        return $this->belongsTo(Escotilha::class);
+        return $this->hasMany(Alerta::class);
     }
 }

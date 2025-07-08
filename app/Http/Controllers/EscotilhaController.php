@@ -2,134 +2,71 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Escotilha;
-use Carbon\Carbon;
+use Illuminate\Http\Request;
 use App\Services\ApiResponse;
 
 class EscotilhaController extends Controller
 {
-    public function inserirEscotilha(Request $request)
+    public function listarEscotilhas()
     {
+        $escotilhas = Escotilha::all();
+        return ApiResponse::success($escotilhas);
+    }
 
-        if (!auth()->user()->tokenCan('clients:list')) {
-            return ApiResponse::unauthorized();
+    public function obterPorId($id)
+    {
+        $escotilha = Escotilha::find($id);
+
+        if (!$escotilha) {
+            return ApiResponse::error('Escotilha não encontrada', 404);
         }
 
-        if (!$request->has(['distancia', 'luz_ambiente'])) {
-            return ApiResponse::error('Parâmetros obrigatórios não informados');
-        }
+        return ApiResponse::success($escotilha);
+    }
 
-        if (!is_numeric($request->distancia) || !is_numeric($request->luz_ambiente)) {
-            return ApiResponse::error('Parâmetros inválidos: distancia e luz_ambiente devem ser numéricos');
+    public function cadastrar(Request $request)
+    {
+        $request->validate([
+            'serial_number' => 'required|string|unique:escotilhas,serial_number',
+        ]);
+
+        $escotilha = Escotilha::create([
+            'serial_number' => $request->serial_number,
+        ]);
+
+        return ApiResponse::success($escotilha, 201);
+    }
+
+    public function atualizar(Request $request, $id)
+    {
+        $escotilha = Escotilha::find($id);
+
+        if (!$escotilha) {
+            return ApiResponse::error('Escotilha não encontrada', 404);
         }
 
         $request->validate([
-            'distancia' => 'required|numeric',
-            'luz_ambiente' => 'required|numeric',
+            'serial_number' => 'required|string|unique:escotilhas,serial_number,' . $id,
         ]);
 
-        try {
-            $escotilha = Escotilha::create([
-                'distancia' => $request->distancia,
-                'luz_ambiente' => $request->luz_ambiente,
-                'hora_atualizacao' => Carbon::now(),
-            ]);
-
-            return ApiResponse::success([
-                'message' => 'Registro da escotilha inserido com sucesso',
-                'data' => $escotilha
-            ]);
-        } catch (\Exception $e) {
-            \Log::error('Erro ao inserir registro da escotilha: ' . $e->getMessage());
-            return ApiResponse::error('Erro ao inserir registro da escotilha');
-        }
-    }
-
-    public function atualizarEscotilha(Request $request, $id)
-    {
-        $request->validate([
-            'distancia' => 'required|numeric',
-            'luz_ambiente' => 'required|numeric',
+        $escotilha->update([
+            'serial_number' => $request->serial_number,
         ]);
 
-        try {
-            $escotilha = Escotilha::find($id);
-
-            if (!$escotilha) {
-                return ApiResponse::error('Registro da escotilha não encontrado');
-            }
-
-            $escotilha->update([
-                'distancia' => $request->distancia,
-                'luz_ambiente' => $request->luz_ambiente,
-                'hora_atualizacao' => Carbon::now(),
-            ]);
-
-            return ApiResponse::success([
-                'message' => 'Registro da escotilha atualizado com sucesso',
-                'data' => $escotilha
-            ]);
-        } catch (\Exception $e) {
-            \Log::error('Erro ao atualizar registro da escotilha: ' . $e->getMessage());
-            return ApiResponse::error('Erro ao atualizar registro da escotilha');
-        }
+        return ApiResponse::success($escotilha);
     }
 
-    public function listarEscotilha()
+    public function deletar($id)
     {
-        if (!auth()->user()->tokenCan('clients:list')) {
-            return ApiResponse::error('Access denied', 401);
+        $escotilha = Escotilha::find($id);
+
+        if (!$escotilha) {
+            return ApiResponse::error('Escotilha não encontrada', 404);
         }
 
-        try {
-            $registros = Escotilha::orderBy('hora_atualizacao', 'desc')->get();
-            return ApiResponse::success([
-                'message' => 'Lista de registros da escotilha',
-                'data' => $registros
-            ]);
-        } catch (\Exception $e) {
-            \Log::error('Erro ao listar registros da escotilha: ' . $e->getMessage());
-            return ApiResponse::error('Erro ao listar registros da escotilha');
-        }
-    }
+        $escotilha->delete();
 
-    public function obterEscotilhaPorId($id)
-    {
-        try {
-            $escotilha = Escotilha::find($id);
-
-            if (!$escotilha) {
-                return ApiResponse::error('Registro da escotilha não encontrado');
-            }
-
-            return Apiresponse::success([
-                'message' => 'Registro da escotilha encontrado',
-                'data' => $escotilha
-            ]);
-        } catch (\Exception $e) {
-            \Log::error('Erro ao obter registro da escotilha: ' . $e->getMessage());
-            return ApiResponse::error('Erro ao obter registro da escotilha');
-        }
-    }
-
-    public function deletarEscotilha($id)
-    {
-        try {
-            $escotilha = Escotilha::find($id);
-
-            if (!$escotilha) {
-                return ApiResponse::error('Registro da escotilha não encontrado');
-            }
-
-            $escotilha->delete();
-
-            return ApiResponse::success([
-                'message' => 'Registro da escotilha excluído com sucesso',
-            ]);
-        } catch (\Exception $e) {
-            \Log::error('Erro ao excluir registro da escotilha: ' . $e->getMessage());
-            return ApiResponse::error('Erro ao excluir registro da escotilha');
-        }
+        return ApiResponse::success(['message' => 'Escotilha deletada com sucesso']);
     }
 }
