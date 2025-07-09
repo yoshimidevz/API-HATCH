@@ -1,61 +1,121 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Este projeto consiste em uma aplicação completa, dividida em duas partes principais: uma API RESTful desenvolvida com Laravel e um aplicativo móvel frontend construído com React Native e Expo. O objetivo é fornecer uma solução robusta e escalável para [Inserir breve descrição do propósito do projeto, se conhecido, ou deixar genérico].
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Repositórios
 
-## About Laravel
+•
+Frontend (Client): https://github.com/yoshimidevz/expo-hatch
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+•
+API (Backend): https://github.com/yoshimidevz/API-HATCH
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Instruções de Execução
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Para colocar o projeto em funcionamento, siga os passos abaixo para cada parte da aplicação:
 
-## Learning Laravel
+API (Backend) - Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1.
+Clone o repositório:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+2.
+Instale as dependências do Composer:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3.
+Configure o arquivo de ambiente:
+Copie o arquivo .env.example para .env:
 
-## Laravel Sponsors
+4.
+Gere a chave da aplicação:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+5.
+Execute as migrações do banco de dados:
 
-### Premium Partners
+6.
+Inicie o servidor de desenvolvimento:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Frontend (Client) - React Native com Expo
 
-## Contributing
+1.
+Clone o repositório:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2.
+Instale as dependências do npm:
 
-## Code of Conduct
+3.
+Inicie o aplicativo Expo:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4.
+Configure a URL da API:
+Certifique-se de que a URL da sua API Laravel esteja configurada corretamente no código do frontend para que ele possa se comunicar com o backend. Geralmente, isso é feito em um arquivo de configuração ou variável de ambiente dentro do projeto React Native. (Ex: services/api.ts ou similar).
 
-## Security Vulnerabilities
+Tecnologias Utilizadas
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Este projeto utiliza as seguintes tecnologias:
 
-## License
+Backend (API)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+•
+Laravel: Framework PHP para desenvolvimento web.
+
+•
+PHP: Linguagem de programação.
+
+Frontend (Client)
+
+•
+React Native: Framework para desenvolvimento de aplicativos móveis multiplataforma.
+
+•
+Expo: Conjunto de ferramentas e serviços para desenvolvimento de aplicativos React Native.
+
+•
+TypeScript: Superset de JavaScript que adiciona tipagem estática.
+
+Organização dos Casos de Uso e Modelos
+
+API (Backend) - Laravel
+
+A estrutura da API Laravel segue as convenções do framework, com a organização de código focada em modularidade e separação de responsabilidades:
+
+•
+app/: Contém o código principal da aplicação, incluindo modelos (Models), controladores (Controllers), provedores de serviço (Service Providers) e outras classes de lógica de negócio.
+
+•
+Models/: Define a estrutura do banco de dados e as relações entre as tabelas. Cada modelo representa uma entidade no sistema (ex: User, Product, Order).
+
+•
+Http/Controllers/: Lida com as requisições HTTP e a lógica de negócio associada a cada rota.
+
+
+
+•
+database/: Contém as migrações (migrations) para a criação e modificação das tabelhas do banco de dados, e os seeders (seeders) para popular o banco com dados iniciais.
+
+•
+routes/: Define as rotas da API, mapeando URLs para os controladores correspondentes.
+
+Frontend (Client) - React Native com Expo
+
+A estrutura do frontend React Native é organizada para facilitar o desenvolvimento e a manutenção, separando os componentes da interface do usuário, a lógica de negócio e a navegação:
+
+•
+app/: Contém as telas principais da aplicação, seguindo a abordagem de roteamento baseado em arquivos do Expo.
+
+•
+components/: Armazena componentes de UI reutilizáveis, como botões, inputs, cards, etc.
+
+•
+contexts/: Gerencia o estado global da aplicação, utilizando a API de Contexto do React para compartilhar dados entre componentes.
+
+•
+hooks/: Contém hooks personalizados para encapsular lógica de negócio e reutilizá-la em diferentes componentes.
+
+•
+navigation/: Define a estrutura de navegação do aplicativo, incluindo pilhas de navegação e abas.
+
+•
+services/: Responsável pela comunicação com a API backend, contendo as configurações do Axios e as funções para realizar requisições HTTP.
+
+•
+utils/: Contém funções utilitárias e helpers que podem ser usados em diversas partes da aplicação.
+

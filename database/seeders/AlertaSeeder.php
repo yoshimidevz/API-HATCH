@@ -34,6 +34,18 @@ class AlertaSeeder extends Seeder
             'type' => 'ERRO_SENSOR',
             'message' => 'Alerta simulado: falha na leitura do sensor.',
         ]);
+        Alerta::create([
+            'escotilha_id' => $escotilhaId,
+            'sensor_data_id' => $sensorDataId,
+            'type' => 'ERRO_SENSOR',
+            'message' => 'Alerta: falha na leitura.',
+        ]);
+        Alerta::create([
+            'escotilha_id' => $escotilhaId,
+            'sensor_data_id' => $sensorDataId,
+            'type' => 'ABERTURA',
+            'message' => 'Alerta simulado: escotilha aberta.',
+        ]);
 
         $this->command->info('Alertas simulados criados com sucesso!');
     }
