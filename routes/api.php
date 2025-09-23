@@ -28,5 +28,5 @@ Route::delete('/alertas/{id}', [App\Http\Controllers\AlertaController::class, 'd
 
 Route::post('/login', [AuthController::class, '@login']);
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/logout', AuthController::class, '@logout')->middleware('auth:sanctum');
+Route::post('/logout', [AuthController::class, '@logout'])->middleware('auth:sanctum');
 
