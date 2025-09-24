@@ -26,7 +26,7 @@ Route::get('/alertas', [App\Http\Controllers\AlertaController::class, 'listarAle
 Route::get('/alertas/{id}', [App\Http\Controllers\AlertaController::class, 'obterAlertaPorId'])->middleware('auth:sanctum','ability:clients:view');
 Route::delete('/alertas/{id}', [App\Http\Controllers\AlertaController::class, 'deletarAlerta'])->middleware('auth:sanctum','ability:admin');
 
-Route::post('/login', [AuthController::class, '@login']);
+Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/logout', [AuthController::class, '@logout'])->middleware('auth:sanctum');
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
