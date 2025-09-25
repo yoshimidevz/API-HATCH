@@ -29,6 +29,7 @@ class AuthController extends Controller
         $abilities = match ($user->role) {
             'admin' => ['admin'], // ou ['admin']
             'client' => ['clients:list', 'clients:view'], // apenas as rotas permitidas
+            'enterprise' => ['enterprise'],
             default => [],
         };
 

@@ -12,18 +12,19 @@ Route::get('/status', function () {
 })->middleware('auth:sanctum');
 
 
-Route::get('/escotilhas', [EscotilhaController::class, 'listarEscotilhas'])->middleware('auth:sanctum','ability:admin');
-Route::get('/escotilhas/{id}', [EscotilhaController::class, 'obterPorId'])->middleware('auth:sanctum','ability:clients:list');
-Route::post('/escotilhas', [EscotilhaController::class, 'cadastrar'])->middleware('auth:sanctum','ability:admin');
-Route::put('/escotilhas/{id}', [EscotilhaController::class, 'atualizar'])->middleware('auth:sanctum','ability:admin');
-Route::delete('/escotilhas/{id}', [EscotilhaController::class, 'deletar'])->middleware('auth:sanctum','ability:admin');
+Route::get('/escotilhas', [EscotilhaController::class, 'listarEscotilhas'])->middleware('auth:sanctum','ability:admin,enterprise');
+Route::get('/escotilhas/{id}', [EscotilhaController::class, 'obterPorId'])->middleware('auth:sanctum','ability:clients:list,admin,enterprise');
+
+Route::post('/escotilhas', [EscotilhaController::class, 'cadastrar'])->middleware('auth:sanctum','ability:admin,enterprise');
+Route::put('/escotilhas/{id}', [EscotilhaController::class, 'atualizar'])->middleware('auth:sanctum','ability:admin,enterprise');
+Route::delete('/escotilhas/{id}', [EscotilhaController::class, 'deletar'])->middleware('auth:sanctum','ability:admin,enterprise');
 
 Route::get('/sensores', [SensorDataController::class, 'listarSensorData'])->middleware('auth:sanctum','ability:admin');
-Route::post('/sensores', [SensorDataController::class, 'inserirSensorData'])->middleware('auth:sanctum','ability:admin');
+Route::post('/sensores', [SensorDataController::class, 'inserirSensorData'])->middleware('auth:sanctum','ability:admin'); //rota teste, não é p existir
 Route::get('/sensores/{id}', [SensorDataController::class, 'obterSensorDataPorId'])->middleware('auth:sanctum','ability:admin');
 
-Route::get('/alertas', [App\Http\Controllers\AlertaController::class, 'listarAlertas'])->middleware('auth:sanctum','ability:clients:list');
-Route::get('/alertas/{id}', [App\Http\Controllers\AlertaController::class, 'obterAlertaPorId'])->middleware('auth:sanctum','ability:clients:view');
+Route::get('/alertas', [App\Http\Controllers\AlertaController::class, 'listarAlertas'])->middleware('auth:sanctum','ability:clients:list,admin,enterprise');
+Route::get('/alertas/{id}', [App\Http\Controllers\AlertaController::class, 'obterAlertaPorId'])->middleware('auth:sanctum','ability:admin');
 Route::delete('/alertas/{id}', [App\Http\Controllers\AlertaController::class, 'deletarAlerta'])->middleware('auth:sanctum','ability:admin');
 
 Route::post('/login', [AuthController::class, 'login']);
