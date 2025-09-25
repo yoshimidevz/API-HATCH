@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamp('timestamp')->useCurrent();
 
             $table->timestamps();
-            $table->softDeletes(); // Opcional
+            $table->softDeletes();
         });
     }
 

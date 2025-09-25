@@ -9,30 +9,29 @@ use App\Services\ApiResponse;
 
 class SensorDataController extends Controller
 {
-    public function inserirSensorData(Request $request)
-    {
-        if (!auth()->user()->tokenCan('clients:list')) {
-            return ApiResponse::unauthorized();
-        }
+    public function inserirSensorData(Request $request){
 
         $request->validate([
-            'escotilha_id' => 'required|integer|exists:escotilhas,id',
+            'serial_number' => 'required|string|exists:escotilhas,serial_number',
             'distancia' => 'required|numeric',
             'luz_ambiente' => 'required|numeric',
         ]);
 
         try {
+            $escotilha = Escotilha::where('serial_number', $request->serial_number)->first();
+
             $sensorData = SensorData::create([
-                'escotilha_id' => $request->escotilha_id,
+                'escotilha_id' => $escotilha->id,
                 'distancia' => $request->distancia,
                 'luz_ambiente' => $request->luz_ambiente,
-                'hora_atualizacao' => Carbon::now(),
+                'hora_atualizacao' => now(),
             ]);
 
             return ApiResponse::success([
                 'message' => 'Dados do sensor inseridos com sucesso',
                 'data' => $sensorData,
-            ]);
+            ], 201);
+
         } catch (\Exception $e) {
             \Log::error('Erro ao inserir dados do sensor: ' . $e->getMessage());
             return ApiResponse::error('Erro ao inserir dados do sensor');

@@ -13,10 +13,11 @@ class SensorData extends Model
 
     protected $fillable = [
         'escotilha_id',
-        'sensor_id',
-        'valor',
+        'distancia',
+        'luz_ambiente',
         'hora_atualizacao',
     ];
+
 
     protected $dates = [
         'hora_atualizacao',
