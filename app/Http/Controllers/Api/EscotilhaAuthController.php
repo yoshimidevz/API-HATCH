@@ -19,7 +19,9 @@ class EscotilhaAuthController extends Controller
             'serial_number' => $request->serial_number
         ]);
 
-        $token = $escotilha->createToken("escotilha-{$escotilha->serial_number}", ['escotilha:send-data'])->plainTextToken;
+        // Gera token a partir de um usuário existente
+        $user = User::find(1); // ou outro usuário que você queira associar
+        $token = $user->createToken("escotilha-{$escotilha->serial_number}", ['escotilha:send-data'])->plainTextToken;
 
         return ApiResponse::success([
             'message' => 'Escotilha registrada/login efetuado',
