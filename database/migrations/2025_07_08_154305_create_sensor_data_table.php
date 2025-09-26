@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('sensor_data', function (Blueprint $table) {
             $table->id();
             $table->foreignId('escotilha_id')
-                ->constrained('escotilhas')
-                ->onDelete('cascade');
+                  ->constrained('escotilhas')
+                  ->onDelete('cascade');
 
             $table->float('distancia')->nullable();
             $table->float('luz_ambiente')->nullable();
@@ -22,7 +22,6 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-
     }
 
     public function down(): void
