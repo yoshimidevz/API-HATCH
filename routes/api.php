@@ -12,7 +12,7 @@ Route::get('/status', function () {
     return ApiResponse::success('API is running');
 })->middleware('auth:sanctum');
 
-Route::post('/escotilha/register-login', [EscotilhaAuthController::class, 'registerOrLogin']);
+Route::post('/register-login', [EscotilhaAuthController::class, 'registerOrLogin']);
 
 Route::get('/escotilhas', [EscotilhaController::class, 'listarEscotilhas'])->middleware('auth:sanctum','ability:admin,enterprise');
 Route::get('/escotilhas/{id}', [EscotilhaController::class, 'obterPorId'])->middleware('auth:sanctum','ability:clients:list,admin,enterprise');
