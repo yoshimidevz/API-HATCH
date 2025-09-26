@@ -40,13 +40,13 @@ class SensorDataController extends Controller
 
     public function listarSensorData()
     {
-        if (!auth()->user()->tokenCan('clients:list')) {
+        if (!auth()->user()->tokenCan('admin, enterprise')) {
             return ApiResponse::unauthorized();
         }
 
         try {
             $dados = SensorData::with('escotilha')
-                ->orderBy('hora_atualizacao', 'desc')
+                ->created_at('hora_atualizacao', 'desc')
                 ->get();
 
             return ApiResponse::success([
@@ -83,7 +83,7 @@ class SensorDataController extends Controller
     {
         try {
             $dados = SensorData::where('escotilha_id', $escotilhaId)
-                ->orderBy('hora_atualizacao', 'desc')
+                ->created_at('hora_atualizacao', 'desc')
                 ->get();
 
             return ApiResponse::success([

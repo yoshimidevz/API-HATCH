@@ -19,7 +19,7 @@ class ApiResponse{
             'message' => $message
         ], 500);
     }
-    public static function unauthorized():JsonReponse
+    public static function unauthorized():JsonResponse
     {
         return response()->json([
             'status_code' => 401,
