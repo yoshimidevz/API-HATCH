@@ -20,7 +20,7 @@ Route::put('/escotilhas/{id}', [EscotilhaController::class, 'atualizar'])->middl
 Route::delete('/escotilhas/{id}', [EscotilhaController::class, 'deletar'])->middleware('auth:sanctum','ability:admin,enterprise');
 
 Route::get('/sensores', [SensorDataController::class, 'listarSensorData'])->middleware('auth:sanctum','ability:admin');
-Route::post('/sensores', [SensorDataController::class, 'inserirSensorData'])->middleware('auth:sanctum','ability:admin'); //rota teste, não é p existir
+Route::post('/sensores', [SensorDataController::class, 'inserirSensorData'])->middleware('auth:sanctum','ability:escotilha:send-data');
 Route::get('/sensores/{id}', [SensorDataController::class, 'obterSensorDataPorId'])->middleware('auth:sanctum','ability:admin');
 
 Route::get('/alertas', [App\Http\Controllers\AlertaController::class, 'listarAlertas'])->middleware('auth:sanctum','ability:clients:list,admin,enterprise');

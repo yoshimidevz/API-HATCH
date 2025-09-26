@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\SensorData;
-use Carbon\Carbon;
+use App\Models\Escotilha;
 use App\Services\ApiResponse;
 
 class SensorDataController extends Controller
 {
-    public function inserirSensorData(Request $request){
-
+    public function inserirSensorData(Request $request)
+    {
         $request->validate([
             'serial_number' => 'required|string|exists:escotilhas,serial_number',
             'distancia' => 'required|numeric',
@@ -18,7 +18,13 @@ class SensorDataController extends Controller
         ]);
 
         try {
+            $user = $request->user();
+
             $escotilha = Escotilha::where('serial_number', $request->serial_number)->first();
+
+            if ($user->role === 'escotilha' && $escotilha->user_id !== $user->id) {
+                return ApiResponse::unauthorized('Token não corresponde a essa escotilha');
+            }
 
             $sensorData = SensorData::create([
                 'escotilha_id' => $escotilha->id,
@@ -40,13 +46,14 @@ class SensorDataController extends Controller
 
     public function listarSensorData()
     {
-        if (!auth()->user()->tokenCan('admin, enterprise')) {
+        $user = auth()->user();
+        if (!($user->tokenCan('admin') || $user->tokenCan('enterprise'))) {
             return ApiResponse::unauthorized();
         }
 
         try {
             $dados = SensorData::with('escotilha')
-                ->created_at('hora_atualizacao', 'desc')
+                ->orderBy('hora_atualizacao', 'desc')
                 ->get();
 
             return ApiResponse::success([
@@ -83,7 +90,7 @@ class SensorDataController extends Controller
     {
         try {
             $dados = SensorData::where('escotilha_id', $escotilhaId)
-                ->created_at('hora_atualizacao', 'desc')
+                ->orderBy('hora_atualizacao', 'desc')
                 ->get();
 
             return ApiResponse::success([

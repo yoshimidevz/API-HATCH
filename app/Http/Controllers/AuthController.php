@@ -29,10 +29,15 @@ class AuthController extends Controller
             'admin' => ['admin'],
             'client' => ['clients:list', 'clients:view'],
             'enterprise' => ['enterprise'],
+            'escotilha' => ['escotilha:send-data'],
             default => [],
         };
 
-        $token = $user->createToken($user->name, $abilities, now()->addHour())->plainTextToken;
+        if($user->role === 'escotilha'){
+            $token = $user->createToken($user->name, $abilities)->plainTextToken;
+        } else {
+            $token = $user->createToken($user->name, $abilities, now()->addHour())->plainTextToken;
+        }
 
         return ApiResponse::success([
             'user' => $user,
@@ -65,6 +70,44 @@ class AuthController extends Controller
             'user' => $user,
             'token' => $token,
         ]);
+    }
+
+    public function registerEscotilha(Request $request){
+
+        $request->validate([
+            'serial_number' => 'required|string|exists:escotilhas,serial_number',
+            'name' => 'required|string|max:255',
+            'password' => 'required|string|min:6'
+        ]);
+
+        $escotilha = Escotilha::where('serial_number', $request->serial_number)->first();
+
+        if (!$escotilha) {
+            return response()->json(['error' => 'Serial não encontrado'], 404);
+        }
+
+        if ($escotilha->user_id) {
+            return response()->json(['error' => 'Escotilha já vinculada'], 400);
+        }
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->serial_number . '@escotilha.local',
+            'password' => Hash::make($request->password),
+            'role' => 'escotilha',
+        ]);
+
+        $escotilha->user_id = $user->id;
+        $escotilha->save();
+
+        $token = $user->createToken("escotilha-{$request->serial_number}", ['escotilha:send-data'])->plainTextToken;
+
+        return response()->json([
+            'user' => $user,
+            'serial_number' => $request->serial_number,
+            'token' => $token,
+            'endpoint' => url('/api/sensores')
+        ], 201);
     }
 
     public function logout(Request $request){
