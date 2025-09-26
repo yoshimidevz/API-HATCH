@@ -33,6 +33,7 @@ class SensorDataController extends Controller
                 'hora_atualizacao' => now(),
             ]);
 
+
             return ApiResponse::success([
                 'message' => 'Dados do sensor inseridos com sucesso',
                 'data' => $sensorData,

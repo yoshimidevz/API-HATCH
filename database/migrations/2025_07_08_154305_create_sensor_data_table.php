@@ -11,20 +11,18 @@ return new class extends Migration
         Schema::create('sensor_data', function (Blueprint $table) {
             $table->id();
             $table->foreignId('escotilha_id')
-                  ->constrained('escotilhas')
-                  ->onDelete('cascade');
+                ->constrained('escotilhas')
+                ->onDelete('cascade');
 
-            $table->foreignId('sensor_id')
-                  ->constrained('sensores')
-                  ->onDelete('cascade');
+            $table->float('distancia')->nullable();
+            $table->float('luz_ambiente')->nullable();
 
-            $table->float('valor');
-
-            $table->timestamp('timestamp')->useCurrent();
+            $table->timestamp('hora_atualizacao')->useCurrent();
 
             $table->timestamps();
             $table->softDeletes();
         });
+
     }
 
     public function down(): void
