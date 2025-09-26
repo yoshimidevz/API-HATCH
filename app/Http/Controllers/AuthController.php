@@ -40,10 +40,11 @@ class AuthController extends Controller
         }
 
         return ApiResponse::success([
-            'user' => $user,
-            'email' => $user->email,
-            'token' => $token,
-        ]);
+            'message' => 'Escotilha registrada/login efetuado',
+            'data' => [
+                'token' => $token,
+            ],
+        ], 201);
     }
 
     public function register(Request $request)
