@@ -21,7 +21,7 @@ Route::post('/escotilhas', [EscotilhaController::class, 'cadastrar'])->middlewar
 Route::put('/escotilhas/{id}', [EscotilhaController::class, 'atualizar'])->middleware('auth:sanctum','ability:admin,enterprise');
 Route::delete('/escotilhas/{id}', [EscotilhaController::class, 'deletar'])->middleware('auth:sanctum','ability:admin,enterprise');
 
-Route::get('/sensores', [SensorDataController::class, 'listarSensorData'])->middleware('auth:sanctum','ability:admin');
+Route::get('/sensores/listar', [SensorDataController::class, 'listarSensorData'])->middleware('auth:sanctum','ability:admin');
 Route::post('/sensores', [SensorDataController::class, 'inserirSensorData'])->middleware('auth:sanctum','ability:escotilha:send-data');
 Route::get('/sensores/{id}', [SensorDataController::class, 'obterSensorDataPorId'])->middleware('auth:sanctum','ability:admin');
 
