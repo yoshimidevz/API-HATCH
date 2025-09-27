@@ -12,11 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('escotilhas', function (Blueprint $table) {
+            if (!Schema::hasColumn('escotilhas', 'user_id')) {
             $table->foreignId('user_id')
                   ->nullable() // Ou ->constrained() se cada escotilha DEVE ter um usuário
                   ->constrained() // Cria a foreign key para a tabela 'users'
                   ->onDelete('set null'); // Ou 'cascade' se quiser deletar escotilhas ao deletar usuário
+        }
         });
+
     }
 
     /**
