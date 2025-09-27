@@ -19,8 +19,16 @@ class EscotilhaAuthController extends Controller
             'serial_number' => $request->serial_number
         ]);
 
-        // Gera token a partir de um usuário existente
-        $user = User::find(1); // ou outro usuário que você queira associar
+        $user = User::firstOrCreate(
+            [
+                'id' => 1
+            ],
+            [
+                'name' => 'Default User',
+                'email' => 'default@example.com',
+                'password' => bcrypt('password')
+            ]
+        );
         $token = $user->createToken("escotilha-{$escotilha->serial_number}", ['escotilha:send-data'])->plainTextToken;
 
         return ApiResponse::success([
