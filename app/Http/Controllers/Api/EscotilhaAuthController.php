@@ -12,8 +12,9 @@ class EscotilhaAuthController extends Controller
 {
     public function registerOrLogin(Request $request){
         $request->validate([
-            'serial_number' => 'required|string|unique:escotilhas,serial_number'
+            'serial_number' => 'required|string'
         ]);
+
 
         $escotilha = Escotilha::firstOrCreate([
             'serial_number' => $request->serial_number
