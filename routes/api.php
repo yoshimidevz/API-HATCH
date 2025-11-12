@@ -15,6 +15,7 @@ Route::get('/status', function () {
 Route::post('/register-login', [EscotilhaAuthController::class, 'registerOrLogin']);
 
 Route::get('/escotilhas', [EscotilhaController::class, 'listarEscotilhas'])->middleware('auth:sanctum','ability:admin,enterprise');
+Route::post('/escotilhas/toggle', [EscotilhaController::class, 'toggleComporta'])->middleware('auth:sanctum','ability:clients:toggle,admin,enterprise');
 Route::get('/escotilhas/{id}', [EscotilhaController::class, 'obterPorId'])->middleware('auth:sanctum','ability:clients:list,admin,enterprise');
 
 Route::post('/escotilhas', [EscotilhaController::class, 'cadastrar'])->middleware('auth:sanctum','ability:admin,enterprise');

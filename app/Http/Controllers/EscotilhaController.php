@@ -8,6 +8,29 @@ use App\Services\ApiResponse;
 
 class EscotilhaController extends Controller
 {
+    public function toggleComporta(Request $request)
+    {
+        $request->validate([
+            'serial_number' => 'required|string',
+            'action' => 'required|in:abrir,fechar'
+        ]);
+
+        $serial = $request->serial_number;
+        $action = $request->action;
+
+        // Aqui você envia o comando pro ESP32
+        // Pode ser HTTP, MQTT ou outro método que você já use
+        $result = \App\Services\EspSenderService::send($serial, $action);
+
+        if ($result) {
+            return ApiResponse::success([
+                'message' => "Comando {$action} enviado para {$serial}"
+            ]);
+        } else {
+            return ApiResponse::error("Falha ao enviar comando", 500);
+        }
+    }
+    
     public function listarEscotilhas()
     {
         $escotilhas = Escotilha::all();
