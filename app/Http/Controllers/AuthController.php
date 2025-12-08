@@ -12,7 +12,6 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        return response()->json(['debug' => 'login atualizado'], 200);
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|string|min:6',
@@ -20,9 +19,10 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        if (!auth()->guard('web')->attempt($credentials)) {
+        if (!Auth::guard('api')->attempt($credentials)) {
             return ApiResponse::unauthorized();
         }
+
 
         $user = auth()->guard('web')->user();
 
