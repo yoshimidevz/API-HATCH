@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    use Illuminate\Support\Facades\Hash;
+
     public function login(Request $request)
     {
         $request->validate([
@@ -17,14 +19,11 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
         ]);
 
-        $credentials = $request->only('email', 'password');
+        $user = User::where('email', $request->email)->first();
 
-        if (!Auth::guard('api')->attempt($credentials)) {
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return ApiResponse::unauthorized();
         }
-
-
-        $user = auth()->guard('web')->user();
 
         $abilities = match ($user->role) {
             'admin' => ['admin'],
@@ -34,19 +33,20 @@ class AuthController extends Controller
             default => [],
         };
 
-        if($user->role === 'escotilha'){
+        if ($user->role === 'escotilha') {
             $token = $user->createToken($user->name, $abilities)->plainTextToken;
         } else {
             $token = $user->createToken($user->name, $abilities, now()->addHour())->plainTextToken;
         }
 
         return ApiResponse::success([
-            'message' => 'Escotilha registrada/login efetuado',
+            'message' => 'Login efetuado',
             'data' => [
                 'token' => $token,
             ],
         ], 201);
     }
+
 
     public function register(Request $request)
     {
