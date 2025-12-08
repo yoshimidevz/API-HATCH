@@ -12,6 +12,7 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        return response()->json(['debug' => 'login atualizado'], 200);
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|string|min:6',
