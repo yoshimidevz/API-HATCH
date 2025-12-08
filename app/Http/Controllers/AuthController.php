@@ -19,11 +19,11 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        if (!auth()->attempt($credentials)) {
+        if (!auth()->guard('web')->attempt($credentials)) {
             return ApiResponse::unauthorized();
         }
 
-        $user = auth()->user();
+        $user = auth()->guard('web')->user();
 
         $abilities = match ($user->role) {
             'admin' => ['admin'],
