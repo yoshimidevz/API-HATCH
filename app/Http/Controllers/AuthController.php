@@ -39,10 +39,9 @@ class AuthController extends Controller
 
         return ApiResponse::success([
             'message' => 'Login efetuado',
-            'data' => [
-                'token' => $token,
-            ],
-        ], 201);
+            'token' => $token,
+            'user' => $user,
+        ]);
     }
 
 
@@ -67,6 +66,7 @@ class AuthController extends Controller
         $token = $user->createToken($user->name, $abilities, now()->addHour())->plainTextToken;
 
         return ApiResponse::success([
+            'message' => 'Registro efetuado',
             'user' => $user,
             'token' => $token,
         ]);
