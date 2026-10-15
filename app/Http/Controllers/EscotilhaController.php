@@ -5,32 +5,32 @@ namespace App\Http\Controllers;
 use App\Models\Escotilha;
 use Illuminate\Http\Request;
 use App\Services\ApiResponse;
+use App\Services\MqttService;
 
 class EscotilhaController extends Controller
 {
-    public function toggleComporta(Request $request)
-    {
+    public function toggleComporta(Request $request){
         $request->validate([
             'serial_number' => 'required|string',
             'action' => 'required|in:abrir,fechar'
         ]);
 
-        $serial = $request->serial_number;
-        $action = $request->action;
+        $escotilha = Escotilha::where('serial_number', $request->serial_number)->first();
 
-        // Aqui você envia o comando pro ESP32
-        // Pode ser HTTP, MQTT ou outro método que você já use
-        $result = \App\Services\EspSenderService::send($serial, $action);
-
-        if ($result) {
-            return ApiResponse::success([
-                'message' => "Comando {$action} enviado para {$serial}"
-            ]);
-        } else {
-            return ApiResponse::error("Falha ao enviar comando", 500);
+        if (!$escotilha) {
+            return ApiResponse::error('Escotilha não encontrada');
         }
+
+        $topic = "escotilha/{$request->serial_number}/comando";
+        $message = json_encode(['action' => $request->action]);
+
+        MqttService::publish($topic, $message);
+
+        return ApiResponse::success([
+            'message' => "Comando {$request->action} enviado para {$request->serial_number}"
+        ]);
     }
-    
+
     public function listarEscotilhas()
     {
         $escotilhas = Escotilha::all();

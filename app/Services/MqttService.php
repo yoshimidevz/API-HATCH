@@ -15,7 +15,7 @@ class MqttService
         $mqtt = new MqttClient($host, $port, $clientId, MqttClient::MQTT_3_1_1);
 
         $settings = (new ConnectionSettings)
-            ->setUseTls(true)
+            ->setUseTls(false)
             ->setUsername(config('mqtt.username'))
             ->setPassword(config('mqtt.password'));
 
