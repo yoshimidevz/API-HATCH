@@ -50,7 +50,7 @@ class MqttListen extends Command
             pcntl_signal(SIGINT,  fn () => $this->mqtt->interrupt());
         }
 
-        $this->mqtt->connect($settings, true);
+        $this->mqtt->connect($settings, false);
         $this->info('[MQTT] Conectado. Escutando ' . self::TOPICO);
 
         $this->mqtt->subscribe(self::TOPICO, function (string $topic, string $message) {
