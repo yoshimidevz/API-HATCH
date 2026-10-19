@@ -20,7 +20,6 @@ class MqttListen extends Command
     private const TOPICO = 'escotilha/+/sensor';
     private const INTERVALO_SALVAR_S = 60;
 
-    /** Estado anterior de cada escotilha: [serial => ['vazamento' => bool, 'solenoide' => string, 'ultimoSalvo' => int]] */
     private array $estado = [];
 
     private ?MqttClient $mqtt = null;
@@ -73,8 +72,20 @@ class MqttListen extends Command
 
         $serial    = $dados['serial_number'];
         $vazamento = (bool) ($dados['vazamento'] ?? false);
-        $solenoide = (string) ($dados['solenoide'] ?? 'desconhecido'); // estado do DISPOSITIVO
+        $solenoide = (string) ($dados['solenoide'] ?? 'desconhecido');
         $travado   = $solenoide === 'fechado';
+        $restante  = (int) ($dados['liberado_restante_s'] ?? 0);
+
+        $this->comBanco(function () use ($serial, $travado, $restante) {
+            DB::table('escotilhas')
+                ->where('serial_number', $serial)
+                ->whereNull('deleted_at')
+                ->update([
+                    'travado'           => $travado,
+                    'liberado_ate'      => $restante > 0 ? now()->addSeconds($restante) : null,
+                    'ultima_leitura_em' => now(),
+                ]);
+        });
 
         $anterior = $this->estado[$serial] ?? [
             'vazamento'   => false,
@@ -91,7 +102,7 @@ class MqttListen extends Command
             return;
         }
 
-        $this->comBanco(function () use ($serial, $dados, $vazamento, $travado, $mudouVazamento, $mudouSolenoide) {
+        $this->comBanco(function () use ($serial, $dados, $vazamento, $travado, $restante, $mudouVazamento, $mudouSolenoide) {
             $escotilha = DB::table('escotilhas')
                 ->where('serial_number', $serial)
                 ->whereNull('deleted_at')
@@ -116,7 +127,7 @@ class MqttListen extends Command
             if ($mudouVazamento && $vazamento) {
                 $mensagem = $travado
                     ? 'Vazamento detectado! O dispositivo travou a bica automaticamente.'
-                    : 'Vazamento detectado durante a liberação manual. O dispositivo não travou.';
+                    : 'Vazamento detectado durante a liberação. O dispositivo não travou.';
                 $this->criarAlerta($escotilha->id, $leituraId, self::TIPO_CRITICO, $mensagem);
             }
 
@@ -125,9 +136,9 @@ class MqttListen extends Command
                 $this->criarAlerta($escotilha->id, $leituraId, self::TIPO_INFO, $texto);
             }
 
-            $this->line(sprintf('[%s] %s | lux %.1f | dist %.1f | vazamento %s | dispositivo %s',
+            $this->line(sprintf('[%s] %s | lux %.1f | dist %.1f | vazamento %s | dispositivo %s | liberado %ds',
                 $agora->format('H:i:s'), $serial, $dados['lux'] ?? 0, $dados['distancia_cm'] ?? 0,
-                $vazamento ? 'SIM' : 'NAO', $travado ? 'TRAVADO' : 'LIBERADO'));
+                $vazamento ? 'SIM' : 'NAO', $travado ? 'TRAVADO' : 'LIBERADO', $restante));
         });
 
         $this->estado[$serial] = [
@@ -151,7 +162,6 @@ class MqttListen extends Command
         $this->info("[ALERTA] {$tipo}: {$mensagem}");
     }
 
-    /** Executa a operacao no banco e reconecta uma vez se o MySQL tiver derrubado a conexao */
     private function comBanco(callable $operacao): void
     {
         try {
