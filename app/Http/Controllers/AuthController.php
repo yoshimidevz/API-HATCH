@@ -25,7 +25,7 @@ class AuthController extends Controller
 
         $abilities = match ($user->role) {
             'admin' => ['admin'],
-            'client' => ['clients:list', 'clients:view'],
+            'client' => ['clients:list', 'clients:view', 'clients:toggle'],
             'enterprise' => ['enterprise'],
             'escotilha' => ['escotilha:send-data'],
             default => [],
@@ -61,7 +61,7 @@ class AuthController extends Controller
         ]);
 
         // Define as abilities conforme o papel
-        $abilities = ['clients:list', 'clients:view'];
+        $abilities = ['clients:list', 'clients:view', 'clients:toggle'];
 
         $token = $user->createToken($user->name, $abilities, now()->addHour())->plainTextToken;
 
