@@ -14,7 +14,6 @@ class MqttListen extends Command
     protected $signature = 'mqtt:listen';
     protected $description = 'Escuta as leituras das escotilhas via MQTT, salva no banco e gera alertas';
 
-    // [AJUSTAR] use os mesmos valores de "type" que aparecem no passo 29a
     private const TIPO_CRITICO = 'critical';
     private const TIPO_INFO    = 'info';
 
@@ -74,7 +73,8 @@ class MqttListen extends Command
 
         $serial    = $dados['serial_number'];
         $vazamento = (bool) ($dados['vazamento'] ?? false);
-        $solenoide = (string) ($dados['solenoide'] ?? 'desconhecido');
+        $solenoide = (string) ($dados['solenoide'] ?? 'desconhecido'); // estado do DISPOSITIVO
+        $travado   = $solenoide === 'fechado';
 
         $anterior = $this->estado[$serial] ?? [
             'vazamento'   => false,
@@ -91,7 +91,7 @@ class MqttListen extends Command
             return;
         }
 
-        $this->comBanco(function () use ($serial, $dados, $vazamento, $solenoide, $mudouVazamento, $mudouSolenoide) {
+        $this->comBanco(function () use ($serial, $dados, $vazamento, $travado, $mudouVazamento, $mudouSolenoide) {
             $escotilha = DB::table('escotilhas')
                 ->where('serial_number', $serial)
                 ->whereNull('deleted_at')
@@ -114,18 +114,20 @@ class MqttListen extends Command
             ]);
 
             if ($mudouVazamento && $vazamento) {
-                $this->criarAlerta($escotilha->id, $leituraId, self::TIPO_CRITICO,
-                    'Vazamento detectado! A bica foi fechada automaticamente.');
+                $mensagem = $travado
+                    ? 'Vazamento detectado! O dispositivo travou a bica automaticamente.'
+                    : 'Vazamento detectado durante a liberação manual. O dispositivo não travou.';
+                $this->criarAlerta($escotilha->id, $leituraId, self::TIPO_CRITICO, $mensagem);
             }
 
             if ($mudouSolenoide) {
-                $texto = $solenoide === 'fechado' ? 'Bica fechada.' : 'Bica aberta.';
+                $texto = $travado ? 'Dispositivo travado.' : 'Dispositivo liberado.';
                 $this->criarAlerta($escotilha->id, $leituraId, self::TIPO_INFO, $texto);
             }
 
-            $this->line(sprintf('[%s] %s | lux %.1f | dist %.1f | vazamento %s | bica %s',
+            $this->line(sprintf('[%s] %s | lux %.1f | dist %.1f | vazamento %s | dispositivo %s',
                 $agora->format('H:i:s'), $serial, $dados['lux'] ?? 0, $dados['distancia_cm'] ?? 0,
-                $vazamento ? 'SIM' : 'NAO', $solenoide));
+                $vazamento ? 'SIM' : 'NAO', $travado ? 'TRAVADO' : 'LIBERADO'));
         });
 
         $this->estado[$serial] = [
